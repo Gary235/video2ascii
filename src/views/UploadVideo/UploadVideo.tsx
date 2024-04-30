@@ -10,14 +10,24 @@ interface IProps {
   playerRef: MutableRefObject<HTMLPreElement | null>;
 }
 
+interface ICharLengths {
+  charHeight: number | null;
+  charWidth: number | null;
+  maxCharHeight: number | null;
+  maxCharWidth: number | null;
+}
+
+
 const UploadVideo: FC<IProps> = ({playerRef}) => {
   const {videoRef, setEnded, setProgress, setLoadedMetadata, setVideoUploaded, videoUploaded} = useContext(VideoContext);
 
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const charLengths = useRef<ICharLengths>({charHeight: null, charWidth: null, maxCharHeight: null, maxCharWidth: null});
 
   const onVideoUploaded = (e: ChangeEvent<HTMLInputElement>) => {
     if (!videoRef?.current || !e.target?.files) return;
 
+    charLengths.current.charWidth = null;
     const media = URL.createObjectURL(e.target.files[0]);
     videoRef.current.src = media;
     videoRef.current.style.display = "block";
@@ -30,22 +40,27 @@ const UploadVideo: FC<IProps> = ({playerRef}) => {
     if (!canvasRef.current || !playerRef.current) return;
 
     const {width: playerWidth, height: playerHeight} = document.getElementById('ascii')!.getBoundingClientRect();
-    const MAX_CHAR_WIDTH = Math.floor(playerWidth / W_PX_PER_CHAR);
-    const MAX_CHAR_HEIGHT = Math.floor(playerHeight / H_PX_PER_CHAR);
 
-    const width = Math.floor(Math.min(video.videoWidth, playerWidth) / W_PX_PER_CHAR)
-    const height = Math.floor(Math.min(video.videoHeight, playerHeight) / H_PX_PER_CHAR)
+    let {charWidth, charHeight, maxCharHeight, maxCharWidth} = charLengths.current;
+    if (charWidth === null && video.videoWidth) {
+      charWidth = Math.floor(Math.min(video.videoWidth, playerWidth) / W_PX_PER_CHAR)
+      charHeight = Math.floor(Math.min(video.videoHeight, playerHeight) / H_PX_PER_CHAR)
+      maxCharWidth = Math.floor(playerWidth / W_PX_PER_CHAR);
+      maxCharHeight = Math.floor(playerHeight / H_PX_PER_CHAR);
 
-    if (!width || !height) return;
+      charLengths.current = {charHeight, charWidth, maxCharHeight, maxCharWidth};
+    }
 
-    canvasRef.current.width = width;
-    canvasRef.current.height = height;
+    if (!charWidth || !charHeight) return;
+
+    canvasRef.current.width = charWidth;
+    canvasRef.current.height = charHeight;
 
     const canvasContext = canvasRef.current.getContext("2d", {willReadFrequently: true});
-    canvasContext?.drawImage(video, 0, 0, width, height);
-    const grayScales = convertToGrayScales(canvasContext, width, height);
+    canvasContext?.drawImage(video, 0, 0, charWidth, charHeight);
+    const grayScales = convertToGrayScales(canvasContext, charWidth, charHeight);
 
-    drawAscii(grayScales, width, height, playerRef, MAX_CHAR_WIDTH, MAX_CHAR_HEIGHT);
+    drawAscii(grayScales, charWidth, charHeight, playerRef, maxCharWidth!, maxCharHeight!);
     setProgress(video.currentTime);
   }
 
