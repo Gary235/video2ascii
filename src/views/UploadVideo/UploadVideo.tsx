@@ -59,7 +59,7 @@ const UploadVideo: FC<IProps> = ({playerRef}) => {
         </div>
       </label>
 
-      <pre>{PEOPLE}</pre>
+      <pre className="people">{PEOPLE}</pre>
 
       {/* HIDDEN */}
       <input
