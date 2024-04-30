@@ -1,4 +1,4 @@
-import { ChangeEvent, FC, MutableRefObject, useContext, useRef } from "react";
+import { ChangeEvent, FC, MutableRefObject, useContext, useEffect, useRef } from "react";
 
 import { convertToGrayScales, drawAscii } from "../../utils/ascii";
 import { INSERT_VIDEO_BODY, INSERT_VIDEO_BORDER, PEOPLE } from "../../constants/ascii-art";
@@ -22,7 +22,9 @@ const UploadVideo: FC<IProps> = ({playerRef}) => {
   const {
     videoRef,
     videoUploaded,
+    bw,
     bwRef,
+    playing,
     setEnded,
     setProgress,
     setLoadedMetadata,
@@ -33,6 +35,12 @@ const UploadVideo: FC<IProps> = ({playerRef}) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const canvasBGRef = useRef<HTMLCanvasElement | null>(null);
   const charLengths = useRef<ICharLengths>({charHeight: null, charWidth: null, maxCharHeight: null, maxCharWidth: null});
+
+  useEffect(() => {
+    if (playing || !videoRef?.current) return;
+
+    captureVideo(videoRef.current);
+  }, [bw])
 
   const onVideoUploaded = (e: ChangeEvent<HTMLInputElement>) => {
     if (!videoRef?.current || !e.target?.files) return;
@@ -75,8 +83,6 @@ const UploadVideo: FC<IProps> = ({playerRef}) => {
     const canvasContext = canvasRef.current.getContext("2d", {willReadFrequently: true});
     canvasContext?.drawImage(video, 0, 0, charWidth, charHeight);
     const grayScales = convertToGrayScales(canvasContext, charWidth, charHeight);
-
-    console.log(bwRef.current);
 
     if (!bwRef.current) {
       const canvasBGContext = canvasBGRef.current.getContext("2d", {willReadFrequently: true});

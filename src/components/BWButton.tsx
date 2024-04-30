@@ -2,7 +2,7 @@ import { FC, useContext, useRef } from "react";
 import VideoContext from "../contexts/VideoContext";
 
 const BWButton: FC = () => {
-  const {setBw, bw, playing} = useContext(VideoContext);
+  const {setBw, bw} = useContext(VideoContext);
   const btnRef = useRef<HTMLButtonElement | null>(null);
 
   const toggleBw = () => {
@@ -13,9 +13,9 @@ const BWButton: FC = () => {
     else btnRef.current.style.animation = 'deactivate-colors 200ms ease-out forwards'
   }
 
-  const title = !playing ? 'change colors while playing' : bw ? 'show colors' : 'show black & white'
+  const title = bw ? 'show colors' : 'show black & white'
   return (
-    <button ref={btnRef} title={title} onClick={toggleBw} style={{fontSize: 30}} disabled={!playing}>◑</button>
+    <button ref={btnRef} title={title} onClick={toggleBw} style={{fontSize: 30}}>◑</button>
   )
 }
 
