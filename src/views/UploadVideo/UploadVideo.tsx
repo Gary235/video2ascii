@@ -19,9 +19,19 @@ interface ICharLengths {
 
 
 const UploadVideo: FC<IProps> = ({playerRef}) => {
-  const {videoRef, setEnded, setProgress, setLoadedMetadata, setVideoUploaded, videoUploaded} = useContext(VideoContext);
+  const {
+    videoRef,
+    videoUploaded,
+    bwRef,
+    setEnded,
+    setProgress,
+    setLoadedMetadata,
+    setVideoUploaded,
+    setPlaying
+  } = useContext(VideoContext);
 
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const canvasBGRef = useRef<HTMLCanvasElement | null>(null);
   const charLengths = useRef<ICharLengths>({charHeight: null, charWidth: null, maxCharHeight: null, maxCharWidth: null});
 
   const onVideoUploaded = (e: ChangeEvent<HTMLInputElement>) => {
@@ -34,10 +44,13 @@ const UploadVideo: FC<IProps> = ({playerRef}) => {
     videoRef.current.volume = DEFAULT_VOLUME;
     videoRef.current.currentTime = 0.1;
     setVideoUploaded(true);
+    setEnded(false);
+    setProgress(0);
+    setPlaying(false)
   }
 
   const captureVideo = (video: HTMLVideoElement) => {
-    if (!canvasRef.current || !playerRef.current) return;
+    if (bwRef === null || !canvasBGRef.current || !canvasRef.current || !playerRef.current) return;
 
     const {width: playerWidth, height: playerHeight} = document.getElementById('ascii')!.getBoundingClientRect();
 
@@ -49,18 +62,33 @@ const UploadVideo: FC<IProps> = ({playerRef}) => {
       maxCharHeight = Math.floor(playerHeight / H_PX_PER_CHAR);
 
       charLengths.current = {charHeight, charWidth, maxCharHeight, maxCharWidth};
+
+      canvasRef.current.width = charWidth;
+      canvasRef.current.height = charHeight;
+
+      canvasBGRef.current.width = playerWidth;
+      canvasBGRef.current.height = playerHeight;
     }
 
     if (!charWidth || !charHeight) return;
-
-    canvasRef.current.width = charWidth;
-    canvasRef.current.height = charHeight;
 
     const canvasContext = canvasRef.current.getContext("2d", {willReadFrequently: true});
     canvasContext?.drawImage(video, 0, 0, charWidth, charHeight);
     const grayScales = convertToGrayScales(canvasContext, charWidth, charHeight);
 
-    drawAscii(grayScales, charWidth, charHeight, playerRef, maxCharWidth!, maxCharHeight!);
+    console.log(bwRef.current);
+
+    if (!bwRef.current) {
+      const canvasBGContext = canvasBGRef.current.getContext("2d", {willReadFrequently: true});
+      canvasBGContext?.drawImage(video, 0, 0, playerWidth, playerHeight);
+      playerRef.current.classList.add('colors');
+      playerRef.current.style.backgroundImage = `url(${canvasBGRef.current.toDataURL()})`;
+    } else if (playerRef.current.style.backgroundImage !== 'none') {
+      playerRef.current.classList.remove('colors');
+      playerRef.current.style.backgroundImage = 'none';
+    }
+
+    drawAscii(grayScales, charWidth, charHeight, playerRef, maxCharWidth!, maxCharHeight!, bwRef.current!);
     setProgress(video.currentTime);
   }
 
@@ -95,6 +123,7 @@ const UploadVideo: FC<IProps> = ({playerRef}) => {
         onLoadedMetadata={() => setLoadedMetadata(true)}
       ></video>
       <canvas id="canvas" ref={canvasRef} className="hidden"></canvas>
+      <canvas id="canvas-bg" ref={canvasBGRef} className="hidden"></canvas>
     </section>
   )
 }

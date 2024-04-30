@@ -6,6 +6,7 @@ import ProgressBar from "../../components/ProgressBar";
 import CloseVideoButton from "../../components/CloseVideoButton";
 import CopyFrameButton from "../../components/CopyFrameButton";
 import VideoContext from "../../contexts/VideoContext";
+import BWButton from "../../components/BWButton";
 
 interface IProps {
   playerRef: MutableRefObject<HTMLPreElement | null>;
@@ -19,6 +20,7 @@ const VideoPlayer: FC<IProps> = ({playerRef}) => {
       <div className="options">
         <CloseVideoButton />
         <CopyFrameButton playerRef={playerRef} />
+        <BWButton />
       </div>
       <pre id="ascii" ref={playerRef} />
       <div className="controls">

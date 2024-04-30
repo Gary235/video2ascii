@@ -25,11 +25,13 @@ export const convertToGrayScales: TconvertToGrayScales = (context, width, height
 };
 
 // chars to test -> █ ⣿ ▓
-const grayRamp = '¶$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/|()1{}[]?-_+~<>i!lI;:,"^`\'. ';
-const rampLength = grayRamp.length;
+const ramp = '¶$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/|()1{}[]?-_+~<>i!lI;:,"^`\'. ';
+const inversedRamp = ' .\'`^",:;Il!i><~+_-?][}{1)(|/tfjrxnuvczXYUJCLQ0OZmwqpdbkhao*#MW&8%B@$¶';
+const rampLength = ramp.length;
 
-type TgetCharacterForGrayScale = (grayScale: number) => string;
-const getCharacterForGrayScale: TgetCharacterForGrayScale = (grayScale) => grayRamp[Math.ceil((rampLength - 1) * grayScale / 255)];
+type TgetCharacter = (grayScale: number) => string;
+const getCharacterForBw: TgetCharacter = (grayScale) => ramp[Math.ceil((rampLength - 1) * grayScale / 255)];
+const getCharacterForColors: TgetCharacter = (grayScale) => inversedRamp[Math.ceil((rampLength - 1) * grayScale / 255)];
 
 type TdrawAscii = (
     grayScales: number[],
@@ -37,18 +39,21 @@ type TdrawAscii = (
     height: number,
     ref: MutableRefObject<HTMLPreElement | null>,
     maxW: number,
-    maxH: number
+    maxH: number,
+    bw: boolean
 ) => void;
-export const drawAscii: TdrawAscii = (grayScales, width, height, ref, maxW, maxH) => {
+export const drawAscii: TdrawAscii = (grayScales, width, height, ref, maxW, maxH, bw) => {
     const cantPadTop = (maxH - height) / 2
     const cantPadInline = (maxW - width) / 2
 
     const padTop = '\n'.repeat(cantPadTop);
     const padInline = ' '.repeat(cantPadInline);
 
+    const getChar = bw ? getCharacterForBw : getCharacterForColors
+
     let ascii = padTop + padInline;
     ascii += grayScales.reduce((asciiImage, grayScale, index) => {
-        let nextChars = getCharacterForGrayScale(grayScale);
+        let nextChars = getChar(grayScale);
         if ((index + 1) % width === 0) {
             nextChars += `${padInline}\n${padInline}`;
         }

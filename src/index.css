@@ -92,6 +92,15 @@ section.video-player {
     aspect-ratio: 16 / 9;
     font-family: monospace;
     font-size: 12px;
+
+    &.colors {
+      background-repeat: no-repeat;
+      background-size: contain;
+      background-clip: text;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      -webkit-font-smoothing: antialiased;
+    }
   }
 
   .controls {
@@ -197,16 +206,43 @@ section.video-player {
       color: white;
       font-size: 20px;
       transition: 200ms ease-out;
+
+      &:hover {
+        transform: scale(1.2);
+      }
+
+      &:disabled {
+        cursor: not-allowed;
+      }
     }
 
-    button:hover {
-      transform: scale(1.2);
-    }
   }
 }
 
 
 @keyframes frame-copied {
-  0% { color: #3d6ec9; }
+  0% { color: #95baff; }
   100% { color: white; }
+}
+
+@keyframes activate-colors {
+  0% {
+    color: white;
+    transform: rotate(0);
+  }
+  100% {
+    color: #95baff;
+    transform: rotate(180deg);
+  }
+}
+
+@keyframes deactivate-colors {
+  0% {
+    color: #95baff;
+    transform: rotate(180deg);
+  }
+  100% {
+    color: white;
+    transform: rotate(0);
+  }
 }

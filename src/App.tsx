@@ -7,14 +7,20 @@ import VideoContext from "./contexts/VideoContext";
 function App() {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const playerRef = useRef<HTMLPreElement | null>(null);
+  const bwRef = useRef(true)
 
-  const [videoUploaded, setVideoUploaded] = useState(false)
-  const [playing, setPlaying] = useState(false)
-  const [loadedMetadata, setLoadedMetadata] = useState(false)
-  const [ended, setEnded] = useState(false)
-  const [progress, setProgress] = useState(0)
+  const [videoUploaded, setVideoUploaded] = useState(false);
+  const [playing, setPlaying] = useState(false);
+  const [loadedMetadata, setLoadedMetadata] = useState(false);
+  const [ended, setEnded] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [bw, _setBw] = useState(true)
 
   const setVideoRef = (target: HTMLVideoElement) => (videoRef.current = target)
+  const setBw = (val: boolean) => {
+    _setBw(val);
+    bwRef.current = val
+  }
 
   const value = {
     videoRef,
@@ -23,12 +29,15 @@ function App() {
     progress,
     loadedMetadata,
     videoUploaded,
+    bw,
+    bwRef,
     setEnded,
     setPlaying,
     setProgress,
     setVideoRef,
     setLoadedMetadata,
-    setVideoUploaded
+    setVideoUploaded,
+    setBw,
   }
 
   return (
