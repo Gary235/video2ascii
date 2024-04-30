@@ -79,14 +79,23 @@ const ProgressBar: FC = () => {
     if (pos !== markerPosRef.current) setMarkerPos(pos);
   }
 
+  const onStepClick = (time: number) => {
+    if (!videoRef?.current) return;
+
+    const currentTime = time / 1000;
+    videoRef.current.currentTime = currentTime;
+    setProgress(currentTime);
+  }
+
   return (
     <div className="progress" ref={progressRef}>
       <span className="progress-marker" style={{left: markerPos}} onMouseDown={onMouseDown}>☉</span>
-      {steps.map((duration, index) => (
+      {steps.map((tmsp, index) => (
         <p
           key={index}
-          className={`progress-step ${progress * 1000 > duration ? 'viewed': ''}`}
-          title={`${index * duration}`}
+          className={`progress-step ${progress * 1000 > tmsp ? 'viewed': ''}`}
+          title={`${tmsp / 1000}`}
+          onClick={() => onStepClick(tmsp)}
         >
           _
         </p>
