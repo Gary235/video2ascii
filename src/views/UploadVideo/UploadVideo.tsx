@@ -67,6 +67,7 @@ const UploadVideo: FC<IProps> = ({playerRef}) => {
         id="inputVideo"
         name="inputVideo"
         className="hidden"
+        accept="video/*"
         onChange={onVideoUploaded}
       />
       <video
