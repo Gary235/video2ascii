@@ -80,7 +80,6 @@ section.video-upload {
 
 section.video-player {
   position: relative;
-  border: 1px solid blue;
   width: clamp(300px, 100%, 1024px);
   display: flex;
   flex-direction: column;
@@ -89,7 +88,6 @@ section.video-player {
   margin: auto 0;
 
   pre#ascii {
-    border: 1px solid red;
     width: clamp(300px, 100%, 1024px);
     aspect-ratio: 16 / 9;
     font-family: monospace;
