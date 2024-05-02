@@ -232,14 +232,14 @@ section.video-player {
   }
   100% {
     color: #95baff;
-    transform: rotate(180deg);
+    transform: rotateY(-180deg);
   }
 }
 
 @keyframes deactivate-colors {
   0% {
     color: #95baff;
-    transform: rotate(180deg);
+    transform: rotateY(-180deg);
   }
   100% {
     color: white;

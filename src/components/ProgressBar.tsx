@@ -3,7 +3,15 @@ import VideoContext from "../contexts/VideoContext";
 import { W_PX_PER_CHAR } from "../constants/lengths";
 
 const ProgressBar: FC = () => {
-  const {playing, videoRef, progress, setProgress, loadedMetadata} = useContext(VideoContext);
+  const {
+    playing,
+    videoRef,
+    progress,
+    loadedMetadata,
+    ended,
+    setProgress,
+    setEnded,
+  } = useContext(VideoContext);
 
   const [stepCount, setStepCount] = useState(0);
   const [stepDuration, setStepDuration] = useState(0);
@@ -56,6 +64,8 @@ const ProgressBar: FC = () => {
       const currentTime = percentage * videoRef.current.duration / 100;
       videoRef.current.currentTime = currentTime;
       setProgress(currentTime)
+
+      if (ended) setEnded(false);
     }
 
     window.removeEventListener('mousemove', onMouseMove)
@@ -85,6 +95,7 @@ const ProgressBar: FC = () => {
     const currentTime = time / 1000;
     videoRef.current.currentTime = currentTime;
     setProgress(currentTime);
+    if (ended) setEnded(false);
   }
 
   return (

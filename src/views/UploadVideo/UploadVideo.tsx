@@ -125,7 +125,7 @@ const UploadVideo: FC<IProps> = ({playerRef}) => {
         width={230}
         className="hidden"
         onTimeUpdate={(e) => captureVideo(e.target as HTMLVideoElement)}
-        onEnded={() => setEnded(true)}
+        onEnded={() => {setEnded(true); setPlaying(false)}}
         onLoadedMetadata={() => setLoadedMetadata(true)}
       ></video>
       <canvas id="canvas" ref={canvasRef} className="hidden"></canvas>
