@@ -46,11 +46,13 @@ const UploadVideo: FC<IProps> = ({playerRef}) => {
     if (!videoRef?.current || !e.target?.files) return;
 
     charLengths.current.charWidth = null;
-    const media = URL.createObjectURL(e.target.files[0]);
+    const file = e.target.files[0];
+    const media = URL.createObjectURL(file);
     videoRef.current.src = media;
     videoRef.current.style.display = "block";
     videoRef.current.volume = DEFAULT_VOLUME;
     videoRef.current.currentTime = 0.1;
+    videoRef.current.setAttribute('videoTitle', file.name.split('.')[0])
     setVideoUploaded(true);
     setEnded(false);
     setProgress(0);

@@ -13,7 +13,7 @@ interface IProps {
 }
 
 const VideoPlayer: FC<IProps> = ({playerRef}) => {
-  const {videoUploaded} = useContext(VideoContext);
+  const {videoUploaded, videoRef} = useContext(VideoContext);
 
   return (
     <section className={`video-player ${!videoUploaded ? 'hidden' : ''}`}>
@@ -28,6 +28,7 @@ const VideoPlayer: FC<IProps> = ({playerRef}) => {
         <Volume />
         <ProgressBar />
       </div>
+      <h1>{videoRef?.current?.getAttribute('videoTitle') ?? ''}</h1>
     </section>
   )
 }
